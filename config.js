@@ -3,7 +3,7 @@
  * Jangan masukkan Supabase service-role key di file frontend ini.
  */
 (() => {
-  const API_BASE_URL = 'https://api.example.com';
+  const API_BASE_URL = 'http://159.223.65.115:2001';
   window.SECBOT_API_BASE_URL = API_BASE_URL.replace(/\/$/, '');
   const originalFetch = window.fetch.bind(window);
   window.fetch = (input, init = {}) => {
