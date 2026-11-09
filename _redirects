@@ -1,11 +1,13 @@
-# Cloudflare Pages — SPA routing
-# API dipanggil langsung ke https://api.secbot.web.id (lihat config.js), BUKAN di-proxy lewat Pages.
-/admin       /admin.html  200
-/admin.html  /admin.html  200
-/login       /index.html  200
-/register    /index.html  200
-/pairing     /index.html  200
-/harga       /index.html  200
-/privasi     /index.html  200
-/upgrade     /index.html  200
-/*           /index.html  200
+# Cloudflare Pages — SPA routing (tanpa self-rewrite agar tidak infinite loop)
+# API tetap langsung ke https://api.secbot.web.id (config.js)
+
+/admin     /admin.html   200
+/login     /index.html   200
+/register  /index.html   200
+/pairing   /index.html   200
+/harga     /index.html   200
+/privasi   /index.html   200
+/upgrade   /index.html   200
+
+# Fallback SPA
+/*         /index.html   200
