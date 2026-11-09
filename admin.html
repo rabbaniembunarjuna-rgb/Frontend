@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEC BOT — Admin</title>
+<style>
+:root{color-scheme:dark;--bg:#07110e;--panel:#0e1d18;--line:#244238;--green:#00c98b;--muted:#9ab3a9;--red:#ff7373}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#effaf5;font:15px system-ui,Arial,sans-serif}.wrap{max-width:1150px;margin:auto;padding:28px 18px}.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}.brand img{width:48px;height:48px;object-fit:contain;border-radius:12px}.brand h1{font-size:22px;margin:0}.brand small{color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px}.login{max-width:420px;margin:8vh auto}.field{display:block;width:100%;padding:13px 14px;margin:8px 0 14px;border:1px solid var(--line);border-radius:10px;background:#07110e;color:white}.field.inline{padding:8px 10px;margin:0;width:100%;min-width:90px}.btn{background:var(--green);border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;color:#04251a}.btn:disabled{opacity:.5;cursor:wait}.btn-outline{background:transparent;border:1px solid var(--line);color:#effaf5}.btn-danger{background:#7a1f1f;color:#ffd0d0}.btn-sm{padding:8px 12px;font-size:12px}.error{color:var(--red);min-height:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.stat{background:#091712;border:1px solid var(--line);padding:12px 16px;border-radius:12px}.stat b{display:block;font-size:22px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}th{color:var(--muted)}.pill{padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.confirmed{background:#123f31;color:#7cf0c0}.online{background:#123f31;color:#7cf0c0}.offline{background:#2a2a2a;color:#aaa}.empty{text-align:center;color:var(--muted);padding:28px}.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.tab{padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:#091712;color:var(--muted);cursor:pointer;font-weight:700}.tab.active{background:var(--green);color:#04251a;border-color:var(--green)}.hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+/* Admin panel polish */
+body{background:radial-gradient(900px 420px at 85% -10%,rgba(0,201,139,.13),transparent 60%),#050d0a}
+.wrap{max-width:1280px;padding-top:34px}.brand{padding:14px 18px;border:1px solid #244238;border-radius:18px;background:linear-gradient(120deg,#10251d,#0a1712);box-shadow:0 18px 55px #0005}
+.brand img{width:54px;height:54px;box-shadow:0 0 24px #00c98b30}.brand h1{letter-spacing:.5px}.brand small{letter-spacing:2px;font-weight:800;font-size:10px}
+.panel{background:linear-gradient(145deg,rgba(16,34,27,.97),rgba(9,22,17,.97));border-color:#29483c;box-shadow:0 14px 38px #0003}
+#dashboard>.panel:first-child{padding:22px 24px;border-color:#32634f;background:linear-gradient(110deg,#102a20,#0b1913)}
+#dashboard>.panel:first-child h2{font-size:24px;letter-spacing:-.5px}
+.stat{min-width:150px;background:linear-gradient(145deg,#10271e,#091711);border-color:#28513f}.stat span{font-size:12px;color:#a8c2b6}.stat b{font-size:26px;color:#73edb9}
+.tab{transition:.2s}.tab:hover{border-color:var(--green);color:#eafff5}.tab.active{box-shadow:0 6px 22px #00c98b30}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.7px}td{color:#e0eee7}tbody tr:hover{background:#ffffff08}
+.btn{transition:transform .16s,filter .16s,box-shadow .16s}.btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 7px 20px #0003}.btn-sm{white-space:nowrap}
+.field:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px #00c98b20}
+.price-editor{display:flex;align-items:center;gap:7px;min-width:130px}.price-editor>span{color:var(--muted);font-weight:800}.price-editor .field{min-width:105px}.searchbar{display:flex;gap:10px;align-items:center;margin:0 0 14px}.searchbar .field{margin:0;max-width:440px}.search-result{font-size:12px;color:var(--muted)}
+.admin-notice{display:none;padding:12px 15px;border:1px solid #286b4d;border-radius:12px;background:#0d2b1e;color:#a5f5cc;margin:0 0 16px}.admin-notice.show{display:block}.admin-notice.error{border-color:#7b3838;background:#321616;color:#ffc0c0}
+@media(max-width:600px){.wrap{padding:18px 12px}.panel{padding:14px}.searchbar{align-items:stretch;flex-direction:column}.searchbar .field{max-width:none}#dashboard>.panel:first-child{padding:17px}}
+@media(max-width:600px){.wrap{padding:18px 12px}.panel{padding:14px}}
+</style></head><body><main class="wrap"><header class="brand"><img src="/assets/sec-bot-logo.jpg" alt="SEC BOT"><div><h1>SEC BOT</h1><small>ADMIN PANEL</small></div></header>
+<section id="login" class="panel login"><h2>Masuk Admin</h2><p style="color:var(--muted)">Buka lewat <b>/admin</b> di domain server (bukan file lokal).</p><form id="loginForm"><label>Username<input class="field" id="username" autocomplete="username" required placeholder="SYMZX atau AxxO"></label><label>Password<input class="field" id="password" type="password" autocomplete="current-password" required></label><div id="loginError" class="error"></div><button class="btn" id="loginBtn">MASUK</button></form></section>
+<section id="dashboard" hidden>
+  <div class="panel top"><div><h2 style="margin:0">Panel Admin</h2><small style="color:var(--muted)">Order & user refresh tiap 5 detik</small></div><button class="btn btn-outline" id="logout">Keluar</button></div>
+  <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="orders" type="button">Order</button>
+    <button class="tab" data-tab="users" type="button">User & Nomor WA</button>
+    <button class="tab" data-tab="plans" type="button">Harga Paket</button>
+    <button class="tab" data-tab="sessions" type="button">Sesi Bot</button>
+    <button class="tab" data-tab="audit" type="button">Audit Log</button>
+    <button class="tab" data-tab="errors" type="button">Log Error</button>
+    <button class="tab" data-tab="security" type="button">Keamanan IP</button>
+  </div>
+  <div id="tab-orders">
+    <div class="stats"><div class="stat"><span>Belum dikonfirmasi</span><b id="pendingCount">0</b></div><div class="stat"><span>Sudah dikonfirmasi</span><b id="confirmedCount">0</b></div></div>
+    <div class="panel"><h3>Belum Dikonfirmasi</h3><div class="tablewrap"><table><thead><tr><th>Kode unik</th><th>Pengguna</th><th>Paket</th><th>Nominal</th><th>Metode</th><th>Pengirim</th><th>Tanggal</th><th>Aksi</th></tr></thead><tbody id="pendingRows"></tbody></table></div></div>
+    <div class="panel"><h3>Sudah Dikonfirmasi</h3><div class="tablewrap"><table><thead><tr><th>Kode unik</th><th>Pengguna</th><th>Paket</th><th>Nominal</th><th>Metode</th><th>Pengirim</th><th>Tanggal</th><th>Status</th></tr></thead><tbody id="confirmedRows"></tbody></table></div></div>
+  </div>
+  <div id="tab-users" hidden>
+    <div class="stats">
+      <div class="stat"><span>Total user</span><b id="userCount">0</b></div>
+      <div class="stat"><span>Nomor tertaut</span><b id="linkedCount">0</b></div>
+      <div class="stat"><span>Online</span><b id="onlineCount">0</b></div>
+    </div>
+    <div class="panel"><h3>Semua User & Nomor WhatsApp</h3>
+      <div class="searchbar"><input class="field" id="userSearch" type="search" placeholder="Cari username atau nomor WhatsApp..."><span class="search-result" id="userSearchCount">Memuat user...</span></div>
+      <div class="tablewrap"><table><thead><tr><th>Username</th><th>Nomor WA</th><th>Paket</th><th>Status</th><th>Ditautkan</th><th>Daftar</th><th>Aksi</th></tr></thead><tbody id="userRows"></tbody></table></div>
+    </div>
+  </div>
+  <div id="tab-security" hidden>
+    <div class="panel">
+      <h3 style="margin-top:0">Riwayat IP login pengguna</h3>
+      <p class="hint">Menampilkan IP dari login dan pendaftaran yang berhasil. Data dibatasi hingga 5.000 catatan terakhir.</p>
+      <div class="tablewrap"><table><thead><tr><th>Username</th><th>IP Address</th><th>Aktivitas</th><th>Waktu</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="ipRows"></tbody></table></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0">Daftar IP diblokir</h3>
+      <p class="hint">Pemblokiran berlaku untuk login, sesi akun, dan endpoint pengguna Secbot. Panel admin tetap dapat diakses.</p>
+      <div class="tablewrap"><table><thead><tr><th>IP Address</th><th>Alasan</th><th>Diblokir pada</th><th>Aksi</th></tr></thead><tbody id="blockedIpRows"></tbody></table></div>
+    </div>
+  </div>
+  <div id="tab-plans" hidden>
+    <div class="panel">
+      <h3 style="margin-top:0">Atur harga paket</h3>
+      <p class="hint">Atur harga <b>1 hari / 1 minggu / 1 bulan</b> lalu tekan <b>Simpan</b>. Harga baru langsung dipakai di website & order berikutnya. Order lama tidak berubah. FREE selalu Rp0. Pembelian coin di bot terpisah dan lebih mahal (grind game).</p>
+      <div class="tablewrap"><table><thead><tr><th>ID</th><th>Nama Paket</th><th>1 Hari (Rp)</th><th>1 Minggu (Rp)</th><th>1 Bulan (Rp)</th><th>Aksi</th></tr></thead><tbody id="planRows"></tbody></table></div>
+      <p id="planSaveMsg" class="hint" style="margin-top:12px"></p>
+    </div>
+  </div>
+  <div id="tab-sessions" hidden>
+    <div class="panel">
+      <h3 style="margin-top:0">Sesi bot aktif</h3>
+      <p class="hint">Total sesi dibatasi <b>25</b> (termasuk jadibot). Hentikan sesi dari sini jika perlu.</p>
+      <p id="sessionCount" class="hint"></p>
+      <div class="tablewrap"><table><thead><tr><th>Nomor</th><th>Status</th><th>Paket</th><th>Ditautkan</th><th>Aksi</th></tr></thead><tbody id="sessionRows"></tbody></table></div>
+      <p id="sessionMsg" class="hint" style="margin-top:12px"></p>
+    </div>
+  </div>
+  <div id="tab-audit" hidden>
+    <div class="panel">
+      <h3 style="margin-top:0">Audit log</h3>
+      <p class="hint">Catatan aksi admin: login, blokir IP, ubah paket, konfirmasi order, dan hentikan sesi. 300 terakhir.</p>
+      <div class="tablewrap"><table><thead><tr><th>Waktu</th><th>Admin</th><th>Aksi</th><th>Target</th><th>Detail</th></tr></thead><tbody id="auditRows"></tbody></table></div>
+    </div>
+  </div>
+  <div id="tab-errors" hidden>
+    <div class="panel">
+      <h3 style="margin-top:0">Log error</h3>
+      <p class="hint">Error dan peringatan terbaru dari server dan bot. 200 terakhir.</p>
+      <div class="tablewrap"><table><thead><tr><th>Waktu</th><th>Level</th><th>Pesan</th></tr></thead><tbody id="errorRows"></tbody></table></div>
+    </div>
+  </div>
+</section>
+</main><script src="/config.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const TOKEN_KEY='secbot_admin_token';
+const getStoredToken=()=>{try{return sessionStorage.getItem(TOKEN_KEY)||'';}catch{return''}};
+const setStoredToken=t=>{try{if(t)sessionStorage.setItem(TOKEN_KEY,t);else sessionStorage.removeItem(TOKEN_KEY);}catch{}};
+const rupiah=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const date=s=>s?new Date(s).toLocaleString('id-ID'):'-';
+let cachedUsers=[];
+function notice(message,isError=false){const el=$('adminNotice');if(!el)return;el.textContent=message;el.classList.toggle('error',!!isError);el.classList.add('show');clearTimeout(notice.timer);notice.timer=setTimeout(()=>el.classList.remove('show'),5500)}
+
+async function api(url,opts={}){
+  const headers={'Content-Type':'application/json','Accept':'application/json',...(opts.headers||{})};
+  const token=getStoredToken();
+  if(token) headers.Authorization='Bearer '+token;
+  const full=typeof apiUrl==='function'?apiUrl(url):url;
+  const r=await fetch(full,{credentials:'include',...opts,headers});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(d.message||('HTTP '+r.status));
+  return d;
+}
+
+async function loadOrders(){
+  try{
+    const d=await api('/api/admin/orders');
+    const all=d.data||[],pending=all.filter(x=>x.status==='PENDING'),confirmed=all.filter(x=>x.status==='CONFIRMED');
+    $('pendingCount').textContent=pending.length;$('confirmedCount').textContent=confirmed.length;
+    $('pendingRows').innerHTML=pending.map(o=>`<tr><td><b>${esc(o.trxCode)}</b></td><td>${esc(o.username)}</td><td>${esc(o.planName)}</td><td>${rupiah(o.amount)}</td><td>${esc(o.paymentMethod||"-")}</td><td>${esc(o.senderName||"-")}</td><td>${date(o.createdAt)}</td><td><button type="button" class="btn btn-sm" data-confirm="${esc(o.id)}">KONFIRMASI</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">Belum ada order menunggu konfirmasi.</td></tr>';
+    $('confirmedRows').innerHTML=confirmed.map(o=>`<tr><td><b>${esc(o.trxCode)}</b></td><td>${esc(o.username)}</td><td>${esc(o.planName)}</td><td>${rupiah(o.amount)}</td><td>${esc(o.paymentMethod||"-")}</td><td>${esc(o.senderName||"-")}</td><td>${date(o.createdAt)}</td><td><span class="pill confirmed">DIKONFIRMASI</span></td></tr>`).join('')||'<tr><td colspan="8" class="empty">Belum ada order dikonfirmasi.</td></tr>';
+  }catch(e){if(/login|401|Silakan/i.test(String(e.message)))showLogin();else notice('Gagal memuat order: '+e.message,true)}
+}
+
+async function loadUsers(){
+  try{
+    const d=await api('/api/admin/users');
+    const list=d.data||[];
+    cachedUsers=list;
+    const sum=d.summary||{};
+    $('userCount').textContent=sum.totalUsers??list.length;
+    $('linkedCount').textContent=sum.totalLinked??list.filter(x=>x.linkedPhone).length;
+    $('onlineCount').textContent=sum.online??list.filter(x=>x.online).length;
+    renderUsers();
+  }catch(e){if(/login|401|Silakan/i.test(String(e.message)))showLogin();else notice('Gagal memuat user: '+e.message,true)}
+}
+
+function renderUsers(){
+    const q=String($('userSearch')?.value||'').trim().toLowerCase();
+    const list=cachedUsers.filter(u=>!q||String(u.username||'').toLowerCase().includes(q)||String(u.linkedPhone||'').toLowerCase().includes(q));
+    $('userSearchCount').textContent=`${list.length} dari ${cachedUsers.length} user`;
+    $('userRows').innerHTML=list.map(u=>{
+      const phone=(u.linkedPhone?`+${esc(u.linkedPhone)}`:'—')+(u.allowedPhone?`<br><small style="color:var(--muted)">Resmi: +${esc(u.allowedPhone)}</small>`:'');
+      const status=u.linkedPhone?(u.online?'<span class="pill online">ONLINE</span>':'<span class="pill offline">OFFLINE</span>'):'<span class="pill offline">BELUM TAUT</span>';
+      const act=`<button class="btn btn-sm" data-allowed="${esc(u.id)}" data-cur="${esc(u.allowedPhone||'')}">Ganti nomor</button> `+(u.linkedPhone&&u.id?`<button class="btn btn-danger btn-sm" data-unlink="${esc(u.id)}" data-phone="${esc(u.linkedPhone)}">Hapus sesi</button>`:'');
+      return `<tr><td><b>${esc(u.username)}</b>${u.orphan?' <small style="color:var(--muted)">(orphan)</small>':''}</td><td>${phone}</td><td>${esc(u.planName||'-')}</td><td>${status}</td><td>${date(u.linkedAt)}</td><td>${date(u.createdAt)}</td><td>${act}</td></tr>`;
+    }).join('')||`<tr><td colspan="7" class="empty">${q?'User tidak ditemukan.':'Belum ada user.'}</td></tr>`;
+}
+
+
+async function loadSecurity(){
+  try{
+    const [logs,blocked]=await Promise.all([api('/api/admin/login-ips'),api('/api/admin/blocked-ips')]);
+    const blockedSet=new Set((blocked.data||[]).map(x=>x.ip));
+    $('ipRows').innerHTML=(logs.data||[]).map(x=>{
+      const isBlocked=blockedSet.has(x.ip);
+      const action=isBlocked
+        ? `<button class="btn btn-outline btn-sm" data-unblock-ip="${esc(x.ip)}">Buka blokir</button>`
+        : `<button class="btn btn-danger btn-sm" data-block-ip="${esc(x.ip)}">Blokir IP</button>`;
+      return `<tr><td><b>${esc(x.username||'-')}</b></td><td><code>${esc(x.ip)}</code></td><td>${esc(x.action||'login')}</td><td>${date(x.createdAt)}</td><td>${isBlocked?'<span class="pill offline">DIBLOKIR</span>':'<span class="pill online">AKTIF</span>'}</td><td>${action}</td></tr>`;
+    }).join('')||'<tr><td colspan="6" class="empty">Belum ada riwayat login.</td></tr>';
+    $('blockedIpRows').innerHTML=(blocked.data||[]).map(x=>`<tr><td><code>${esc(x.ip)}</code></td><td>${esc(x.reason||'-')}</td><td>${date(x.blockedAt)}</td><td><button class="btn btn-outline btn-sm" data-unblock-ip="${esc(x.ip)}">Buka blokir</button></td></tr>`).join('')||'<tr><td colspan="4" class="empty">Tidak ada IP yang diblokir.</td></tr>';
+  }catch(e){notice('Gagal memuat keamanan IP: '+e.message,true);if(/login|401|Silakan/i.test(String(e.message)))showLogin()}
+}
+
+async function loadPlans(){
+  try{
+    const d=await api('/api/admin/plans');
+    const list=d.data||[];
+    $('planRows').innerHTML=list.map(p=>{
+      const locked=p.id==='free';
+      const prices=p.prices||{};
+      const d1=prices.d1??0, w1=prices.w1??0, m1=prices.m1??p.price??0;
+      return `<tr data-plan-id="${esc(p.id)}">
+        <td><code>${esc(p.id)}</code></td>
+        <td><input class="field inline" data-f="name" aria-label="Nama paket ${esc(p.id)}" value="${esc(p.name||'')}" ${locked?'readonly':''}></td>
+        <td><div class="price-editor"><span>Rp</span><input class="field inline" data-f="price-d1" aria-label="Harga 1 hari ${esc(p.id)}" type="number" inputmode="numeric" min="${locked?'0':'1'}" max="100000000" step="1" value="${esc(d1)}" ${locked?'readonly':''}></div></td>
+        <td><div class="price-editor"><span>Rp</span><input class="field inline" data-f="price-w1" aria-label="Harga 1 minggu ${esc(p.id)}" type="number" inputmode="numeric" min="${locked?'0':'1'}" max="100000000" step="1" value="${esc(w1)}" ${locked?'readonly':''}></div></td>
+        <td><div class="price-editor"><span>Rp</span><input class="field inline" data-f="price-m1" aria-label="Harga 1 bulan ${esc(p.id)}" type="number" inputmode="numeric" min="${locked?'0':'1'}" max="100000000" step="1" value="${esc(m1)}" ${locked?'readonly':''}></div></td>
+        <td><button type="button" class="btn btn-sm" data-save-plan="${esc(p.id)}" ${locked?'disabled':''}>Simpan Harga</button></td>
+      </tr>`;
+    }).join('')||'<tr><td colspan="6" class="empty">Belum ada paket.</td></tr>';
+  }catch(e){
+    $('planSaveMsg').textContent=e.message||'Gagal memuat paket';
+    if(/login|401|Silakan/i.test(String(e.message)))showLogin();
+  }
+}
+
+const fmtTime=t=>t?new Date(t).toLocaleString('id-ID',{timeZone:'Asia/Jakarta'}):'-';
+
+async function loadSessions(){
+  try{
+    const d=await api('/api/admin/sessions');
+    $('sessionCount').textContent=`Terpakai ${d.total} / ${d.max}`;
+    $('sessionRows').innerHTML=(d.data||[]).map(x=>`
+      <tr>
+        <td>+${esc(x.phone)}</td>
+        <td>${x.online?'🟢 Online':'🔴 Offline'}</td>
+        <td>${esc(String(x.plan||'free').toUpperCase())}</td>
+        <td>${esc(fmtTime(x.linkedAt))}</td>
+        <td><button type="button" class="btn btn-sm" data-stop="${esc(x.phone)}">Hentikan</button></td>
+      </tr>`).join('')||'<tr><td colspan="5" class="empty">Belum ada sesi aktif.</td></tr>';
+  }catch(e){
+    $('sessionMsg').textContent=e.message||'Gagal memuat sesi';
+    if(/login|401|Silakan/i.test(String(e.message)))showLogin();
+  }
+}
+
+$('sessionRows').addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-stop]');
+  if(!btn)return;
+  if(!confirm(`Hentikan sesi +${btn.dataset.stop}?`))return;
+  try{
+    const d=await api('/api/admin/sessions/'+encodeURIComponent(btn.dataset.stop)+'/stop',{method:'POST'});
+    $('sessionMsg').textContent=d.message||'Selesai';
+    loadSessions();
+  }catch(err){$('sessionMsg').textContent=err.message||'Gagal menghentikan sesi'}
+});
+
+async function loadAudit(){
+  try{
+    const d=await api('/api/admin/audit');
+    $('auditRows').innerHTML=(d.data||[]).map(x=>`
+      <tr><td>${esc(fmtTime(x.at))}</td><td>${esc(x.actor)}</td><td>${esc(x.action)}</td><td>${esc(x.target)}</td><td>${esc(x.detail)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">Belum ada catatan.</td></tr>';
+  }catch(e){
+    if(/login|401|Silakan/i.test(String(e.message)))showLogin();
+  }
+}
+
+async function loadErrors(){
+  try{
+    const d=await api('/api/admin/errors');
+    $('errorRows').innerHTML=(d.data||[]).map(x=>`
+      <tr><td>${esc(fmtTime(x.at))}</td><td>${esc(x.level)}</td><td style="white-space:pre-wrap;word-break:break-word">${esc(x.msg)}</td></tr>`).join('')||'<tr><td colspan="3" class="empty">Belum ada error.</td></tr>';
+  }catch(e){
+    if(/login|401|Silakan/i.test(String(e.message)))showLogin();
+  }
+}
+
+function showDashboard(){
+  $('login').hidden=true;$('dashboard').hidden=false;
+  loadOrders();loadUsers();loadPlans();
+  if(window.orderTimer)clearInterval(window.orderTimer);
+  window.orderTimer=setInterval(()=>{loadOrders();loadUsers()},5000);
+}
+function showLogin(){
+  if(window.orderTimer)clearInterval(window.orderTimer);
+  setStoredToken('');
+  $('dashboard').hidden=true;$('login').hidden=false;
+}
+
+$('userSearch').addEventListener('input',renderUsers);
+
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const name=t.dataset.tab;
+  $('tab-orders').hidden=name!=='orders';
+  $('tab-users').hidden=name!=='users';
+  $('tab-plans').hidden=name!=='plans';
+  $('tab-security').hidden=name!=='security';
+  $('tab-sessions').hidden=name!=='sessions';
+  $('tab-audit').hidden=name!=='audit';
+  $('tab-errors').hidden=name!=='errors';
+  if(name==='plans')loadPlans();
+  if(name==='security')loadSecurity();
+  if(name==='sessions')loadSessions();
+  if(name==='audit')loadAudit();
+  if(name==='errors')loadErrors();
+}));
+
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  $('loginError').textContent='';
+  $('loginBtn').disabled=true;
+  try{
+    const body={username:$('username').value.trim(),password:$('password').value};
+    const d=await api('/api/admin/login',{method:'POST',body:JSON.stringify(body)});
+    if(d.token) setStoredToken(d.token);
+    $('password').value='';
+    showDashboard();
+  }catch(err){
+    $('loginError').textContent=err.message||'Login gagal';
+  }finally{$('loginBtn').disabled=false}
+});
+
+$('logout').addEventListener('click',async()=>{
+  try{await api('/api/admin/logout',{method:'POST',body:'{}'})}catch{}
+  finally{showLogin()}
+});
+
+document.addEventListener('click',async e=>{
+  const unblock=e.target.closest('[data-unblock-ip]');
+  if(unblock){
+    const ip=unblock.dataset.unblockIp;
+    if(!confirm('Buka blokir IP '+ip+'?'))return;
+    unblock.disabled=true;
+    try{await api('/api/admin/blocked-ips/'+encodeURIComponent(ip),{method:'DELETE'});notice('Blokir IP '+ip+' berhasil dibuka.');await loadSecurity()}
+    catch(err){notice(err.message,true);unblock.disabled=false}
+    return;
+  }
+  const block=e.target.closest('[data-block-ip]');
+  if(block){
+    const ip=block.dataset.blockIp;
+    const reason=prompt('Alasan pemblokiran IP '+ip+' (opsional):','');
+    if(reason===null)return;
+    block.disabled=true;
+    try{await api('/api/admin/blocked-ips',{method:'POST',body:JSON.stringify({ip,reason})});notice('IP '+ip+' berhasil diblokir.');await loadSecurity()}
+    catch(err){notice(err.message,true);block.disabled=false}
+    return;
+  }
+  const conf=e.target.closest('[data-confirm]');
+  if(conf){
+    e.preventDefault();
+    if(conf.disabled)return;
+    if(!confirm('Konfirmasi pembayaran untuk order ini?'))return;
+    const orderId=conf.dataset.confirm;
+    conf.disabled=true;conf.textContent='MEMPROSES...';
+    try{
+      const result=await api('/api/admin/orders/'+encodeURIComponent(orderId)+'/confirm',{method:'POST',body:'{}'});
+      if(!result.success)throw new Error(result.message||'Konfirmasi tidak berhasil.');
+      notice(`Berhasil! Order ${result.data?.trxCode||orderId} telah dikonfirmasi. Paket pembeli sudah diaktifkan.`);
+      await loadOrders();await loadUsers();
+    }catch(err){notice('Konfirmasi gagal: '+(err.message||'Terjadi kesalahan.'),true);conf.disabled=false;conf.textContent='COBA LAGI';}
+    return;
+  }
+  const al=e.target.closest('[data-allowed]');
+  if(al){
+    const val=window.prompt('Nomor bot resmi baru (contoh 6285708600616). Paket aktif hanya untuk nomor ini.',al.dataset.cur||'');
+    if(!val)return;
+    try{const d=await api('/api/admin/users/'+encodeURIComponent(al.dataset.allowed)+'/allowed-phone',{method:'POST',body:JSON.stringify({number:val})});notice(d.message||'Nomor diubah.');await loadUsers()}
+    catch(err){notice('Gagal: '+(err.message||'error'),true)}
+    return;
+  }
+  const un=e.target.closest('[data-unlink]');
+  if(un){
+    if(!confirm('Hapus sesi WA +'+un.dataset.phone+' dari user ini?'))return;
+    un.disabled=true;
+    try{await api('/api/admin/users/'+encodeURIComponent(un.dataset.unlink)+'/unlink',{method:'POST',body:JSON.stringify({phone:un.dataset.phone})});await loadUsers()}
+    catch(err){alert(err.message)}
+    finally{un.disabled=false}
+    return;
+  }
+  const save=e.target.closest('[data-save-plan]');
+  if(save){
+    const id=save.dataset.savePlan;
+    const row=save.closest('tr');
+    if(!row)return;
+    const name=row.querySelector('[data-f="name"]')?.value?.trim();
+    const readPrice=(key)=>{
+      const el=row.querySelector('[data-f="'+key+'"]');
+      const raw=el?.value?.trim();
+      const n=Number(raw);
+      return {el, raw, n};
+    };
+    const pD1=readPrice('price-d1'), pW1=readPrice('price-w1'), pM1=readPrice('price-m1');
+    const validate=(p,label)=>{
+      if(id==='free') return true;
+      if(!p.raw || !Number.isFinite(p.n) || p.n<1 || p.n>100000000 || !Number.isInteger(p.n)){
+        $('planSaveMsg').textContent=`Harga ${label} tidak valid. Masukkan angka bulat Rp1 sampai Rp100.000.000.`;
+        p.el?.focus();
+        return false;
+      }
+      return true;
+    };
+    if(!validate(pD1,'1 hari')||!validate(pW1,'1 minggu')||!validate(pM1,'1 bulan')) return;
+    const prices={d1:id==='free'?0:pD1.n, w1:id==='free'?0:pW1.n, m1:id==='free'?0:pM1.n};
+    const price=prices.m1;
+    save.disabled=true;save.textContent='MENYIMPAN...';
+    $('planSaveMsg').textContent='Menyimpan perubahan ke database...';
+    try{
+      const d=await api('/api/admin/plans/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify({name,price,prices,duration:'pilihan 1 hari / 1 minggu / 1 bulan'})});
+      if(!d.success || !d.data)throw new Error(d.message||'Server tidak mengembalikan hasil penyimpanan.');
+      const pr=d.data.prices||{};
+      $('planSaveMsg').textContent=`✓ Berhasil disimpan: ${d.data.name||id} → 1h ${rupiah(pr.d1??0)} · 1mg ${rupiah(pr.w1??0)} · 1bl ${rupiah(pr.m1??d.data.price)}. Berlaku untuk order baru.`;
+      await loadPlans();
+    }catch(err){$('planSaveMsg').textContent='Gagal menyimpan: '+(err.message||'Terjadi kesalahan');}
+    finally{save.disabled=false;save.textContent='Simpan Harga'}
+  }
+});
+
+(async()=>{
+  // Cookie HttpOnly is the persistent source of truth; sessionStorage token is legacy fallback.
+  try{await api('/api/admin/me');showDashboard()}catch{showLogin()}
+})();
+</script></body></html>
