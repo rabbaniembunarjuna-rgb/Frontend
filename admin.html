@@ -31,6 +31,7 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.7px}td{color:#e0eee7}
     <button class="tab" data-tab="sessions" type="button">Sesi Bot</button>
     <button class="tab" data-tab="audit" type="button">Audit Log</button>
     <button class="tab" data-tab="errors" type="button">Log Error</button>
+    <button class="tab" data-tab="feedback" type="button">Laporan & Saran</button>
     <button class="tab" data-tab="security" type="button">Keamanan IP</button>
   </div>
   <div id="tab-orders">
@@ -83,6 +84,11 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.7px}td{color:#e0eee7}
       <h3 style="margin-top:0">Audit log</h3>
       <p class="hint">Catatan aksi admin: login, blokir IP, ubah paket, konfirmasi order, dan hentikan sesi. 300 terakhir.</p>
       <div class="tablewrap"><table><thead><tr><th>Waktu</th><th>Admin</th><th>Aksi</th><th>Target</th><th>Detail</th></tr></thead><tbody id="auditRows"></tbody></table></div>
+    </div>
+  </div>
+  <div id="tab-feedback" hidden>
+    <div class="panel"><h3>Laporan & Saran</h3>
+      <div class="tablewrap"><table><thead><tr><th>Waktu</th><th>Jenis</th><th>Judul</th><th>Isi</th><th>Kontak</th></tr></thead><tbody id="feedbackRows"></tbody></table></div>
     </div>
   </div>
   <div id="tab-errors" hidden>
@@ -231,6 +237,15 @@ async function loadAudit(){
   }
 }
 
+async function loadFeedback(){
+  try{
+    const d=await api('/api/admin/feedback');
+    $('feedbackRows').innerHTML=(d.data||[]).map(x=>`
+      <tr><td>${esc(fmtTime(x.createdAt))}</td><td>${esc(x.jenis)}</td><td>${esc(x.judul)}</td><td style="white-space:pre-wrap;word-break:break-word">${esc(x.isi)}</td><td>${esc(x.kontak||'-')}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">Belum ada laporan.</td></tr>';
+  }catch(e){
+    if(/login|401|Silakan/i.test(String(e.message)))showLogin();
+  }
+}
 async function loadErrors(){
   try{
     const d=await api('/api/admin/errors');
@@ -266,11 +281,13 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   $('tab-sessions').hidden=name!=='sessions';
   $('tab-audit').hidden=name!=='audit';
   $('tab-errors').hidden=name!=='errors';
+  $('tab-feedback').hidden=name!=='feedback';
   if(name==='plans')loadPlans();
   if(name==='security')loadSecurity();
   if(name==='sessions')loadSessions();
   if(name==='audit')loadAudit();
   if(name==='errors')loadErrors();
+  if(name==='feedback')loadFeedback();
 }));
 
 $('loginForm').addEventListener('submit',async e=>{

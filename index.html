@@ -677,7 +677,7 @@ if(document.readyState==="loading"){
 
 
 
-document.getElementById("authForm").addEventListener("submit",async e=>{e.preventDefault();const error=document.getElementById("authError"),submit=document.getElementById("authSubmit");error.textContent="";submit.disabled=true;try{let result;if(authMode==="register"){const username=document.getElementById("authUsername").value.trim(),password=document.getElementById("authPassword").value,confirm=document.getElementById("authPasswordConfirm").value;if(!/^[a-zA-Z0-9_]{3,24}$/.test(username))throw new Error("Username harus 3–24 karakter, huruf, angka, atau garis bawah.");if(password.length<8)throw new Error("Password minimal 8 karakter.");if(password!==confirm)throw new Error("Konfirmasi password tidak sama.");const turnstileToken=(document.querySelector('[name="cf-turnstile-response"]')||{}).value||"";result=await authRequest("register",{username,password,turnstileToken});secbotUser=result.user||null;closeAuth();toast("Pendaftaran berhasil.");if(authReturnToPairing){authReturnToPairing=false;requestPairing();return;}if(authReturnToPayment&&selected&&selected.name){document.getElementById("authArea").classList.add("hidden");document.getElementById("paymentArea").classList.remove("hidden");document.getElementById("userEmail").value=secbotUser?.username||"";openModal();}}else{const identity=document.getElementById("authIdentity").value.trim(),password=document.getElementById("authPassword").value;if(!identity||!password)throw new Error("Isi username dan password.");if(["symzx","axxo"].includes(identity.toLowerCase())){result=await adminRequest("login",{username:identity,password});closeAuth();toast("Login admin berhasil. Membuka panel admin...");window.location.replace("/admin");return;}result=await authRequest("login",{identity,password});secbotUser=result.user||null;closeAuth();toast("Berhasil masuk.");if(window.__updateNavAkun)window.__updateNavAkun();if(authReturnToPairing){authReturnToPairing=false;requestPairing();return;}if(authReturnToPayment&&selected&&selected.name){document.getElementById("authArea").classList.add("hidden");document.getElementById("paymentArea").classList.remove("hidden");document.getElementById("userEmail").value=secbotUser?.username||"";openModal();}else if(secbotUser){document.querySelectorAll('a[href="/login"],a[href="/register"]').forEach(a=>{a.textContent=secbotUser.username||"Akun";a.href="#akun";});}}}catch(err){error.textContent=err.message||"Terjadi kesalahan.";}finally{submit.disabled=false;}});
+document.getElementById("authForm").addEventListener("submit",async e=>{e.preventDefault();const error=document.getElementById("authError"),submit=document.getElementById("authSubmit");error.textContent="";submit.disabled=true;try{let result;if(authMode==="register"){const username=document.getElementById("authUsername").value.trim(),password=document.getElementById("authPassword").value,confirm=document.getElementById("authPasswordConfirm").value;if(!/^[a-zA-Z0-9_]{3,24}$/.test(username))throw new Error("Username harus 3–24 karakter, huruf, angka, atau garis bawah.");if(password.length<8)throw new Error("Password minimal 8 karakter.");if(password!==confirm)throw new Error("Konfirmasi password tidak sama.");const turnstileToken=getTurnstileToken();if(!turnstileToken)throw new Error("Selesaikan captcha dulu.");result=await authRequest("register",{username,password,turnstileToken});secbotUser=result.user||null;closeAuth();toast("Pendaftaran berhasil.");if(authReturnToPairing){authReturnToPairing=false;requestPairing();return;}if(authReturnToPayment&&selected&&selected.name){document.getElementById("authArea").classList.add("hidden");document.getElementById("paymentArea").classList.remove("hidden");document.getElementById("userEmail").value=secbotUser?.username||"";openModal();}}else{const identity=document.getElementById("authIdentity").value.trim(),password=document.getElementById("authPassword").value;if(!identity||!password)throw new Error("Isi username dan password.");if(["symzx","axxo"].includes(identity.toLowerCase())){result=await adminRequest("login",{username:identity,password});closeAuth();toast("Login admin berhasil. Membuka panel admin...");window.location.replace("/admin");return;}result=await authRequest("login",{identity,password});secbotUser=result.user||null;closeAuth();toast("Berhasil masuk.");if(window.__updateNavAkun)window.__updateNavAkun();if(authReturnToPairing){authReturnToPairing=false;requestPairing();return;}if(authReturnToPayment&&selected&&selected.name){document.getElementById("authArea").classList.add("hidden");document.getElementById("paymentArea").classList.remove("hidden");document.getElementById("userEmail").value=secbotUser?.username||"";openModal();}else if(secbotUser){document.querySelectorAll('a[href="/login"],a[href="/register"]').forEach(a=>{a.textContent=secbotUser.username||"Akun";a.href="#akun";});}}}catch(err){error.textContent=err.message||"Terjadi kesalahan.";resetTurnstile();}finally{submit.disabled=false;}});
 async function openAuthRoute(mode){history.pushState({auth:true},"",mode==="register"?"/register":"/login");await loadCurrentUser();
 (async function loadPublicPlans(){
   try{
@@ -1213,5 +1213,30 @@ window.addEventListener("scroll",onScrollBar,{passive:true});onScrollBar();
   document.documentElement.innerHTML='<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEC BOT Admin</title></head><body style="margin:0"><iframe title="SEC BOT Admin Panel" style="display:block;width:100%;height:100vh;border:0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" srcdoc="'+html.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'"></iframe></body>';
 })();
 
+</script>
+<script>
+(function(){
+  var siteKey="", widgetId=null, ready=false;
+  window.renderTurnstile=function(){
+    var reg=document.getElementById("registerFields");
+    if(!ready||!siteKey||!window.turnstile||!reg||reg.classList.contains("hidden"))return;
+    var box=document.getElementById("turnstileWidget");
+    if(!box)return;
+    if(widgetId===null){widgetId=window.turnstile.render(box,{sitekey:siteKey,theme:"auto"});}
+    else{window.turnstile.reset(widgetId);}
+  };
+  window.resetTurnstile=function(){if(widgetId!==null&&window.turnstile)window.turnstile.reset(widgetId);};
+  window.getTurnstileToken=function(){
+    if(widgetId===null||!window.turnstile)return "";
+    return window.turnstile.getResponse(widgetId)||"";
+  };
+  window.onTurnstileLoad=function(){ready=true;window.renderTurnstile();};
+  var prevSync=window.syncAuthMode;
+  window.syncAuthMode=function(){prevSync.apply(this,arguments);window.renderTurnstile();};
+  fetch(window.apiUrl("/api/config/public"),{credentials:"include"})
+    .then(function(r){return r.json();})
+    .then(function(d){siteKey=(d&&d.turnstileSiteKey)||"";window.renderTurnstile();})
+    .catch(function(){});
+})();
 </script>
 </body></html>
