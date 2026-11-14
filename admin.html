@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEC BOT — Admin</title>
-<style>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css"><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css"><style>
 :root{color-scheme:dark;--bg:#07110e;--panel:#0e1d18;--line:#244238;--green:#00c98b;--muted:#9ab3a9;--red:#ff7373}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#effaf5;font:15px system-ui,Arial,sans-serif}.wrap{max-width:1150px;margin:auto;padding:28px 18px}.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}.brand img{width:48px;height:48px;object-fit:contain;border-radius:12px}.brand h1{font-size:22px;margin:0}.brand small{color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px}.login{max-width:420px;margin:8vh auto}.field{display:block;width:100%;padding:13px 14px;margin:8px 0 14px;border:1px solid var(--line);border-radius:10px;background:#07110e;color:white}.field.inline{padding:8px 10px;margin:0;width:100%;min-width:90px}.btn{background:var(--green);border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;color:#04251a}.btn:disabled{opacity:.5;cursor:wait}.btn-outline{background:transparent;border:1px solid var(--line);color:#effaf5}.btn-danger{background:#7a1f1f;color:#ffd0d0}.btn-sm{padding:8px 12px;font-size:12px}.error{color:var(--red);min-height:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.stat{background:#091712;border:1px solid var(--line);padding:12px 16px;border-radius:12px}.stat b{display:block;font-size:22px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}th{color:var(--muted)}.pill{padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.confirmed{background:#123f31;color:#7cf0c0}.online{background:#123f31;color:#7cf0c0}.offline{background:#2a2a2a;color:#aaa}.empty{text-align:center;color:var(--muted);padding:28px}.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.tab{padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:#091712;color:var(--muted);cursor:pointer;font-weight:700}.tab.active{background:var(--green);color:#04251a;border-color:var(--green)}.hint{color:var(--muted);font-size:13px;margin:0 0 12px}
 /* Admin panel polish */
@@ -199,7 +199,7 @@ async function loadSessions(){
     $('sessionRows').innerHTML=(d.data||[]).map(x=>`
       <tr>
         <td>+${esc(x.phone)}</td>
-        <td>${x.online?'🟢 Online':'🔴 Offline'}</td>
+        <td>${x.online?'<i class="ph-fill ph-circle" style="color:var(--green)"></i> Online':'<i class="ph-fill ph-circle" style="color:var(--red)"></i> Offline'}</td>
         <td>${esc(String(x.plan||'free').toUpperCase())}</td>
         <td>${esc(fmtTime(x.linkedAt))}</td>
         <td><button type="button" class="btn btn-sm" data-stop="${esc(x.phone)}">Hentikan</button></td>
@@ -376,7 +376,7 @@ document.addEventListener('click',async e=>{
       const d=await api('/api/admin/plans/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify({name,price,prices,duration:'pilihan 1 hari / 1 minggu / 1 bulan'})});
       if(!d.success || !d.data)throw new Error(d.message||'Server tidak mengembalikan hasil penyimpanan.');
       const pr=d.data.prices||{};
-      $('planSaveMsg').textContent=`✓ Berhasil disimpan: ${d.data.name||id} → 1h ${rupiah(pr.d1??0)} · 1mg ${rupiah(pr.w1??0)} · 1bl ${rupiah(pr.m1??d.data.price)}. Berlaku untuk order baru.`;
+      $('planSaveMsg').innerHTML=`<i class="ph ph-check-circle"></i> Berhasil disimpan: ${esc(d.data.name||id)} → 1h ${rupiah(pr.d1??0)} · 1mg ${rupiah(pr.w1??0)} · 1bl ${rupiah(pr.m1??d.data.price)}. Berlaku untuk order baru.`;
       await loadPlans();
     }catch(err){$('planSaveMsg').textContent='Gagal menyimpan: '+(err.message||'Terjadi kesalahan');}
     finally{save.disabled=false;save.textContent='Simpan Harga'}

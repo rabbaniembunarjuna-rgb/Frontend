@@ -3,9 +3,8 @@
 ## Isi folder ini
 - `index.html` — website user (paket, login, pairing)
 - `admin.html` — panel admin
-- `config.js` — **API_BASE** → `https://api.secbot.web.id/api`
+- `config.js` — **API_BASE** → `https://api.secbot.web.id/api`; Google Client ID diambil dari backend (`GET /api/config/public`, nilai dari `.env` `GOOGLE_CLIENT_ID`)
 - `assets/` — gambar & QRIS
-- `_redirects` — SPA routes untuk Cloudflare Pages
 
 ## 1. Push ke GitHub
 ```bash
@@ -25,7 +24,7 @@ git push -u origin main
    - Framework preset: **None**
    - Build command: *(kosong)*
    - Build output directory: `/` (root)
-4. Environment variables: tidak wajib (API_BASE sudah di `config.js`)
+4. Environment variables: tidak wajib (API_BASE sudah di `config.js`, Client ID dari backend)
 5. Deploy
 
 ## 3. Custom domain
@@ -34,11 +33,12 @@ git push -u origin main
    - `secbot.web.id` → CNAME ke `xxx.pages.dev` (otomatis jika domain di CF)
    - SSL/TLS mode: **Full** atau **Full (strict)**
 
-## 4. Ubah API endpoint (opsional)
+## 4. Ubah API endpoint & Google Client ID
 Edit `config.js`:
 ```js
 var DEFAULT_API_BASE = 'https://api.secbot.web.id/api';
 ```
+Google Client ID tidak diisi di frontend. Isi `GOOGLE_CLIENT_ID` di `.env` backend. Untuk dev lokal bisa pakai `window.__GOOGLE_CLIENT_ID`.
 Atau override runtime:
 ```html
 <script>window.__SEC_API_BASE='https://api.secbot.web.id/api'</script>
