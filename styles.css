@@ -604,7 +604,7 @@ body.has-bottom-nav { padding-bottom: 84px; }
 /* Bottom nav: hanya mobile (≤680px) dan hanya di halaman beranda, sama seperti versi asli */
 @media (max-width: 680px) {
   .nav-bottom.nav-visible { display: none; }
-  body.page-beranda .nav-bottom.nav-visible { display: flex; }
+  .nav-bottom.nav-visible { display: flex; }
 }
 @media (min-width: 681px) {
   .nav-bottom { display: none !important; }
@@ -620,3 +620,184 @@ body.has-bottom-nav { padding-bottom: 84px; }
 
 /* Captcha Turnstile di form daftar */
 .turnstile-wrap { display: flex; justify-content: center; margin: 14px 0 6px; min-height: 66px; }
+
+/* =====================================================================
+   ROMBAK: Bottom nav gaya floating + bubble aktif (mobile ≤680px)
+   Murni tampilan. Markup dan JS tidak diubah (id, data-page, class active tetap).
+   ===================================================================== */
+/* Berlaku di SEMUA ukuran layar (HP, tablet, laptop, desktop) */
+.nav-bottom.nav-visible {
+    display: flex !important;
+    position: fixed;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(520px, calc(100vw - 24px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 60;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 68px;
+    margin: 0;
+    padding: 0 6px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .16);
+  }
+  .nav-bottom a,
+  .nav-bottom .nb-logout {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+    padding: 0 0 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--mute);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+  .nav-bottom .nb-icon {
+    width: 44px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    transition: transform .25s ease;
+  }
+  .nav-bottom .nb-icon i { font-size: 22px; }
+  .nav-bottom a.active {
+    color: var(--ink);
+    font-weight: 800;
+  }
+  .nav-bottom a.active .nb-icon {
+    width: 56px;
+    height: 56px;
+    margin-top: -32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: 0 0 0 6px var(--surface);
+  }
+  .nav-bottom a.active .nb-icon i { font-size: 24px; }
+  body.has-bottom-nav { padding-bottom: 104px; }
+  .nav-bottom a:hover,
+  .nav-bottom .nb-logout:hover { color: var(--ink); }
+  .nav-bottom a:focus-visible,
+  .nav-bottom .nb-logout:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: 16px; }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-bottom .nb-icon { transition: none; }
+  }
+
+/* =====================================================================
+   ROMBAK: Kartu harga gaya modern (responsif: 1 kolom HP, 2 tablet, 4 desktop)
+   ===================================================================== */
+.page-harga .price-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+.page-harga .price-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.page-harga .price-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .10);
+}
+.page-harga .price-card h3 {
+  display: inline-block;
+  align-self: flex-start;
+  margin: 6px 8px 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.page-harga .price-card .price {
+  margin: 26px 8px 4px;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+.page-harga .price-card small.micro {
+  margin: 0 8px;
+  display: block;
+  min-height: 34px;
+}
+.page-harga .price-card ul {
+  list-style: none;
+  margin: 18px 8px 22px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  flex: 1;
+}
+.page-harga .price-card ul li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.page-harga .price-card ul li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-weight: 800;
+}
+.page-harga .price-card .buyBtn {
+  width: 100%;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 13px 16px;
+  font-weight: 700;
+}
+.page-harga .price-card.featured {
+  background: linear-gradient(135deg, rgba(42, 63, 214, .10), rgba(42, 63, 214, .30));
+  border-color: rgba(42, 63, 214, .35);
+}
+.page-harga .price-card.featured .buyBtn {
+  background: var(--ink);
+  color: var(--surface);
+  border-color: var(--ink);
+}
+.page-harga .price-card .popular {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+@media (min-width: 681px) and (max-width: 980px) {
+  .page-harga .price-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 380px) {
+  .page-harga .price-card .price { font-size: 34px; }
+}

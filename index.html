@@ -316,7 +316,7 @@
 
 </main>
 
-<section class="section page-laporan wrap" id="laporan" style="display:none">
+<section class="section page-laporan wrap" id="laporan">
   <div class="section-head" style="margin-bottom:28px">
     
     <h2>Laporan, Kritik & Request Fitur</h2>
@@ -547,7 +547,7 @@ if(document.readyState==="loading"){
   }
 
   function updateNavVisibility(){
-    const show = isBeranda() && window.matchMedia("(max-width:680px)").matches;
+    const show = true;
     document.body.classList.toggle("has-bottom-nav", show);
     document.body.classList.toggle("page-beranda", isBeranda());
     if(show){
