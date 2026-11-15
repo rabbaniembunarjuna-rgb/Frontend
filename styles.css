@@ -835,3 +835,9 @@ body.has-bottom-nav { padding-bottom: 84px; }
     transform: none;
   }
 }
+
+/* ===== Input email + OTP di form daftar ===== */
+.otp-row { display: flex; gap: 8px; align-items: stretch; }
+.otp-row .field { flex: 1; min-width: 0; }
+.otp-row button { white-space: nowrap; min-width: 92px; }
+.otp-row button:disabled { opacity: .6; }
