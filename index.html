@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="polish.css">
 
 
 
@@ -1127,7 +1128,7 @@ $("#confirmBtn").addEventListener("click",async()=>{
   if(createdOrder){window.open(buildPaymentWhatsAppUrl(createdOrder),"_blank","noopener");return;}
   const botCheck=String($("#botNumberInput")?.value||"").replace(/\D/g,"");
   if(botCheck.length<8){
-    alert("Isi dulu NOMOR WhatsApp BOT yang akan kamu pakai (contoh: 6285708600616). Paket hanya aktif untuk nomor ini.");
+    toast("Isi nomor WhatsApp BOT dulu, contoh 6285708600616. Paket hanya aktif untuk nomor ini.");
     $("#botNumberInput")?.focus();
     return;
   }
@@ -1271,4 +1272,5 @@ window.addEventListener("scroll",onScrollBar,{passive:true});onScrollBar();
   });
 })();
 </script>
+<script src="checkout-plus.js" defer></script>
 </body></html>
